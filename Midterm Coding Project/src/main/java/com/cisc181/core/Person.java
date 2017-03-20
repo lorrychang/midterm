@@ -1,10 +1,14 @@
 package com.cisc181.core;
 
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /*
  * comment
  */
@@ -17,6 +21,24 @@ public abstract class Person implements java.io.Serializable {
 	private String address;
 	private String phone_number;
 	private String email_address;
+	
+
+public Person(String phone_number) throws PersonException1{
+	List<String> phoneNumbers = new ArrayList<String>(Arrays.asList(phone_number.split(",")));
+	
+	String regex = "^\\(?([0-9]{3})\\)?[-.\\s]?([0-9]{3})[-.\\s]?([0-9]{4})$";
+	
+	Pattern pattern = Pattern.compile(regex);
+	
+		for(String email : phoneNumbers){
+			Matcher matcher = pattern.matcher(email);
+			if (matcher.matches() == false){
+				throw new PersonException1();
+			}
+		}
+		
+	}
+	
 
 	public String getFirstName() {
 		return FirstName;
@@ -110,7 +132,7 @@ public abstract class Person implements java.io.Serializable {
 		System.out.println(this.DOB);
 	}
 
-	public int PrintAge() {
+	public int PrintAge() throws PersonException{
 		Calendar today = Calendar.getInstance();
 		Calendar birthDate = Calendar.getInstance();
 
@@ -120,6 +142,10 @@ public abstract class Person implements java.io.Serializable {
 			throw new IllegalArgumentException("Can't be born in the future");
 		}
 		age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+		
+		if (age>100){
+			throw new PersonException();
+		}
 
 		// If birth date is greater than todays date (after 2 days adjustment of
 		// leap year) then decrement age one year
